@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
+require('dotenv').config({ path: '.env.local' });
+
 const readline = require('readline');
+const { sendMessageToOpenAI, streamMessageToOpenAI } = require('./ai_service');
 
 // Create readline interface
 const rl = readline.createInterface({
@@ -26,11 +29,29 @@ rl.on('line', (input) => {
     return;
   }
   
-  // For now, always respond with "Hello, World!"
-  console.log('AI: Hello, World!');
+  // Send to OpenAI and stream response
+  (async () => {
+    try {
+      process.stdout.write('AI: ');
+      
+      let hasContent = false;
+      for await (const chunk of streamMessageToOpenAI(userInput)) {
+        process.stdout.write(chunk);
+        hasContent = true;
+      }
+      
+      if (!hasContent) {
+        process.stdout.write('[empty response]');
+      }
+      
+      console.log(); // New line after streaming
+      rl.prompt();
+    } catch (err) {
+      console.error(`\nAI Error: ${err.message}`);
+      rl.prompt();
+    }
+  })();
   
-  // Show prompt again for next input
-  rl.prompt();
 });
 
 // Handle Ctrl+C
