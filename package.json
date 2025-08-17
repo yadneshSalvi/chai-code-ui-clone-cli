@@ -17,10 +17,11 @@
   "author": "yadnesh",
   "license": "MIT",
   "dependencies": {
-    "dotenv": "^16.4.5",
     "@langchain/anthropic": "^0.3.26",
     "@langchain/core": "^0.3.71",
     "@langchain/openai": "^0.6.7",
-    "langchain": "^0.3.30"
+    "dotenv": "^16.4.5",
+    "langchain": "^0.3.30",
+    "puppeteer": "^24.16.2"
   }
 }
