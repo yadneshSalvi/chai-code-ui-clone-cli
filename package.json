@@ -2,6 +2,7 @@
   "name": "chai-code-ui-clone-cli",
   "version": "1.0.0",
   "description": "A simple CLI chat application",
+  "type": "module",
   "main": "cli.js",
   "bin": {
     "chai": "./cli.js"
@@ -20,7 +21,9 @@
     "@langchain/anthropic": "^0.3.26",
     "@langchain/core": "^0.3.71",
     "@langchain/openai": "^0.6.7",
+    "axios": "^1.11.0",
     "dotenv": "^16.4.5",
+    "glob": "^11.0.3",
     "langchain": "^0.3.30",
     "puppeteer": "^24.16.2"
   }
