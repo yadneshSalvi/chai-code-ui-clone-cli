@@ -1,9 +1,16 @@
 #!/usr/bin/env node
 
-require('dotenv').config({ path: '.env.local' });
+import dotenv from 'dotenv';
+import readline from 'readline';
+import { WebsiteCloneAgent } from './agent/agent.js';
 
-const readline = require('readline');
-const { sendMessageToOpenAI, streamMessageToOpenAI } = require('./ai_service');
+dotenv.config({ path: '.env.local' });
+
+// Create agent instance (keeps session history in memory)
+const agent = new WebsiteCloneAgent({
+  model: process.env.OPENAI_MODEL || 'gpt-4.1',
+  maxSteps: 20
+});
 
 // Create readline interface
 const rl = readline.createInterface({
@@ -29,22 +36,14 @@ rl.on('line', (input) => {
     return;
   }
   
-  // Send to OpenAI and stream response
+  // Use the agent (no streaming). Agent logs reasoning/tool calls and final JSON.
   (async () => {
     try {
-      process.stdout.write('AI: ');
-      
-      let hasContent = false;
-      for await (const chunk of streamMessageToOpenAI(userInput)) {
-        process.stdout.write(chunk);
-        hasContent = true;
+      console.log('AI: Working...');
+      const result = await agent.run(userInput);
+      if (!result.final) {
+        console.log('AI: No final result yet (max steps reached).');
       }
-      
-      if (!hasContent) {
-        process.stdout.write('[empty response]');
-      }
-      
-      console.log(); // New line after streaming
       rl.prompt();
     } catch (err) {
       console.error(`\nAI Error: ${err.message}`);
